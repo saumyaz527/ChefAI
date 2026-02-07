@@ -3,7 +3,7 @@ import pandas as pd
 import os
 from logic import apply_filters, find_recipes 
 
-# Try to import ollama, but don't crash if it's missing (important for web link)
+# Safe Ollama Import: This prevents the "ModuleNotFoundError" on the web
 try:
     import ollama
 except ImportError:
@@ -20,15 +20,15 @@ st.divider()
 # --- 3. DATA LOADING ---
 @st.cache_data
 def load_data():
-    # Use the mini file for the web link, fall back to big file for local
+    # Priority: mini_recipes.csv (for web), then RAW_recipes.csv (for local)
     if os.path.exists('mini_recipes.csv'):
         file_path = 'mini_recipes.csv'
-    else:
+    elif os.path.exists('RAW_recipes.csv'):
         file_path = 'RAW_recipes.csv'
+    else:
+        return None
         
-    if os.path.exists(file_path):
-        return pd.read_csv(file_path, usecols=['name', 'ingredients', 'minutes', 'steps'])
-    return None
+    return pd.read_csv(file_path, usecols=['name', 'ingredients', 'minutes', 'steps'])
 
 df = load_data()
 
@@ -38,13 +38,35 @@ with st.sidebar:
     mode = st.radio("Cooking Mode", ["Mom (Strictly Veg)", "Me (Eggetarian)"])
     student_mode = st.toggle("🎓 Student Friendly (Under 30m)", value=True)
     st.divider()
-    st.info("Built with ❤️ | Feb 2026")
     
-    # Hidden Apology Trigger
-    if st.text_input("Secret Code", type="password") == "sorry":
+    # Hidden Apology Feature
+    pw = st.text_input("Secret Code", type="password", help="Try 'sorry'")
+    if pw.lower() == "sorry":
         st.balloons()
-        st.write("✨ I'm really sorry. I hope this app shows you I'm trying.")
+        st.success("✨ I'm working hard to grow and improve. I hope this app shows that.")
 
 # --- 5. SEARCH SECTION ---
-left_spacer, center_info, right_spacer = st.columns([1, 2, 1])
-with
+user_input = st.text_input("🔍 Search for a dish", placeholder="e.g., Paneer, Dal, Aloo")
+
+# --- 6. RESULTS SECTION ---
+if df is not None and user_input:
+    safe_df = apply_filters(df, mode, student_mode)
+    results = find_recipes(safe_df, user_input)
+    
+    if not results.empty:
+        # Metrics
+        m1, m2 = st.columns(2)
+        m1.metric("Recipes Found", len(results))
+        m2.metric("Quickest", f"{results['minutes'].min()} mins")
+        
+        st.divider()
+
+        # Simple List Display (Most stable for web)
+        for i, (index, row) in enumerate(results.iterrows()):
+            with st.expander(f"⭐ {row['name'].title()}", expanded=(i==0)):
+                st.write(f"⏱️ **Time:** {row['minutes']} mins")
+                st.info(f"**Ingredients:** {row['ingredients']}")
+                st.write("**Method:**")
+                st.write(row['steps'])
+        
+        # --- 7. AI CHEF
