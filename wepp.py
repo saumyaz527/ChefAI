@@ -10,11 +10,11 @@ except ImportError:
     ollama = None
 
 # --- 1. PAGE CONFIG ---
-st.set_page_config(page_title="Mom's Magic Kitchen", page_icon="🥘", layout="wide")
+st.set_page_config(page_title="The Vidhushka's Kitchen", page_icon="🥘", layout="wide")
 
 # --- 2. HEADER ---
-st.title("🥘 Mom's Magic Kitchen")
-st.markdown("### *Custom Indian Recipes for Mom & Me*")
+st.title("🥘 Vidhuska's Magic")
+st.markdown("### *Custom Indian Recipes for someone special who takes care of me*")
 st.divider()
 
 # --- 3. DATA LOADING ---
