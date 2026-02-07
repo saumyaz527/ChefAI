@@ -35,7 +35,7 @@ df = load_data()
 # --- 4. SIDEBAR ---
 with st.sidebar:
     st.header("⚙️ App Controls")
-    mode = st.radio("Cooking Mode", ["Mom (Strictly Veg)", "Me (Eggetarian)"])
+    mode = st.radio("Cooking Mode", ["Vegetarian", "Eggetarian"])
     student_mode = st.toggle("🎓 Student Friendly (Under 30m)", value=True)
     st.divider()
     
