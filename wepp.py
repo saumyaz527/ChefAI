@@ -15,7 +15,7 @@ st.divider()
 # --- 3. DATA LOADING ---
 @st.cache_data
 def load_data():
-    file_path = 'RAW_recipes.csv'
+    file_path = 'mini_recipes.csv'
     if os.path.exists(file_path):
         # Optimized: Loading only what we need
         return pd.read_csv(file_path, usecols=['name', 'ingredients', 'minutes', 'steps'])

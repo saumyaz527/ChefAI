@@ -1,0 +1,8 @@
+import pandas as pd
+try:
+    df = pd.read_csv('RAW_recipes.csv')
+    mini_df = df.head(100) # Takes 100 recipes
+    mini_df.to_csv('mini_recipes.csv', index=False)
+    print("✅ Success! 'mini_recipes.csv' is now in your folder.")
+except Exception as e:
+    print(f"❌ Error: {e}")
